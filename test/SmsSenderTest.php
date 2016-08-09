@@ -88,7 +88,7 @@ class SmsSenderTest extends \PHPUnit_Framework_TestCase
                             'name'    => ValidatorListener::class,
                             'options' => [
                                 [
-                                    'name'       => 'mobile',
+                                    'name'       => 'phoneNumber',
                                     'filters'    => [
                                         ['name' => 'StringTrim']
                                     ],

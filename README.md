@@ -129,7 +129,7 @@ return [
             'name'    => ValidatorListener::class,
             'options' => [
                 [
-                    'name'       => 'mobile',
+                    'name'       => 'phoneNumber',
                     'filters'    => [
                         ['name' => 'StringTrim']
                     ],

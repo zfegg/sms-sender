@@ -79,15 +79,15 @@ class SmsSender implements EventManagerAwareInterface
     /**
      * Limit send SMS
      *
-     * @param $mobile
+     * @param $phoneNumber
      * @param $message
      *
      * @return bool
      */
-    public function limitSend($mobile, $message)
+    public function limitSend($phoneNumber, $message)
     {
         $this->eventPrototype->setParam('__FUNCTION__', __FUNCTION__);
-        $result = $this->send($mobile, $message);
+        $result = $this->send($phoneNumber, $message);
         $this->eventPrototype->setParam('__FUNCTION__', null);
 
         return $result;

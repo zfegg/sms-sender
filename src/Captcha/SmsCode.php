@@ -14,15 +14,15 @@ use Zend\Validator\Exception;
  */
 class SmsCode extends AbstractAdapter
 {
-    const MISSING_MOBILE_INPUT  = 'missingMobileInput';
-    const EXPIRE_CODE           = 'expireCode';
-    const INPUT_ERROR           = 'inputError';
+    const MISSING_PHONE_NUMBER_INPUT = 'missingPhoneNumberInput';
+    const EXPIRE_CODE = 'expireCode';
+    const INPUT_ERROR = 'inputError';
     const INPUT_ERROR_AND_RESET = 'inputErrorAndReset';
 
     protected $messageTemplates = [
-        self::MISSING_MOBILE_INPUT  => "手机号表单未设置",
-        self::EXPIRE_CODE           => "验证码过期，请重新发送验证码",
-        self::INPUT_ERROR           => "验证码输入错误,还有%times%次有效输入",
+        self::MISSING_PHONE_NUMBER_INPUT => "手机号表单未设置",
+        self::EXPIRE_CODE => "验证码过期，请重新发送验证码",
+        self::INPUT_ERROR => "验证码输入错误,还有%times%次有效输入",
         self::INPUT_ERROR_AND_RESET => "验证码输入错误,请重新发送",
     ];
 
@@ -147,12 +147,12 @@ class SmsCode extends AbstractAdapter
     public function isValid($value, $context = null)
     {
         if (!(is_array($context) && isset($context[$this->getInputName()]))) {
-            $this->error(self::MISSING_MOBILE_INPUT);
+            $this->error(self::MISSING_PHONE_NUMBER_INPUT);
             return false;
         }
 
         $phoneNumber = $context[$this->getInputName()];
-        $cache  = $this->getCache();
+        $cache = $this->getCache();
         if ($data = $cache->getItem($phoneNumber)) {
             if ($data[0] != $value) {
                 $data[1]--;
@@ -188,14 +188,13 @@ class SmsCode extends AbstractAdapter
     public function generate($phoneNumber = null)
     {
         $phoneNumber = $phoneNumber ?: $this->getPhoneNumber();
-        $cache       = $this->getCache();
+        $cache = $this->getCache();
 
         if ($data = $cache->getItem($phoneNumber)) {
             $code = $data;
         } else {
-            $min = 10*$this->getWordlen();
+            $min = pow(10, $this->getWordlen() - 1);
             $max = str_repeat(9, $this->getWordlen());
-
             $code = [mt_rand($min, $max), $this->getAllowValidationTimes()];
 
             $cache->setItem($phoneNumber, $code);

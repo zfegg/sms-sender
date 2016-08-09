@@ -33,7 +33,7 @@ class ValidatorListener extends AbstractListenerAggregate
         return (new Factory())->createInputFilter(
             [
                 [
-                    'name' => 'mobile',
+                    'name' => 'phoneNumber',
                     'filters' => [
                         ['name' => 'StringTrim']
                     ],
@@ -102,13 +102,13 @@ class ValidatorListener extends AbstractListenerAggregate
      */
     public function onValid(SmsEvent $event)
     {
-        $mobile = $event->getPhoneNumber();
+        $phoneNumber = $event->getPhoneNumber();
         $content = $event->getContent();
 
         $inputFilter = $this->getInputFilter();
         $inputFilter->setData(
             [
-                'mobile' => $mobile,
+                'phoneNumber' => $phoneNumber,
                 'content' => $content
             ]
         );

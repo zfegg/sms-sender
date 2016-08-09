@@ -2,6 +2,15 @@
     "name": "zfegg/sms-sender",
     "description": "SMS abstract factory service.",
     "type": "library",
+    "keywords": [
+        "sms",
+        "sender",
+        "sms-sender",
+        "zf",
+        "zend",
+        "zendframework",
+        "zfegg"
+    ],
     "require": {
         "php": "^5.5 || ^7.0",
         "zendframework/zend-eventmanager": "^2.5 || ^3.0"

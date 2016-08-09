@@ -1,0 +1,40 @@
+{
+    "name": "zfegg/sms-sender",
+    "description": "SMS abstract factory service.",
+    "type": "library",
+    "require": {
+        "php": "^5.5 || ^7.0",
+        "zendframework/zend-eventmanager": "^2.5 || ^3.0"
+    },
+    "require-dev": {
+        "zendframework/zend-servicemanager": "^2.7 || ^3.0",
+        "phpunit/phpunit": "^5.4",
+        "squizlabs/php_codesniffer": "^2.5",
+        "zendframework/zend-cache": "^2.7",
+        "zendframework/zend-inputfilter": "^2.7",
+        "zendframework/zend-i18n": "^2.7",
+        "zendframework/zend-captcha": "^2.5"
+    },
+    "authors": [
+        {
+            "name": "moln",
+            "email": "moln.xie@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Zfegg\\SmsSender\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ZfeggTest\\SmsSender\\": "test/"
+        }
+    },
+    "suggest": {
+        "zendframework/zend-cache": "LimitSendListener,SmsCode required",
+        "zendframework/zend-i18n": "PhoneNumber validation required",
+        "zendframework/zend-captcha": "SmsCode required",
+        "zendframework/zend-inputfilter": "ValidationListener required"
+    }
+}

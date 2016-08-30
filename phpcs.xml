@@ -5,6 +5,7 @@
     <!-- display progress -->
     <arg value="p"/>
     <arg name="colors"/>
+    <arg name="encoding" value="utf-8"/>
 
     <!-- inherit rules from: -->
     <rule ref="PSR1"/>

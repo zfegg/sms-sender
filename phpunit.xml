@@ -4,6 +4,11 @@
             <directory>./test</directory>
         </testsuite>
     </testsuites>
+    <filter>
+        <whitelist addUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./src</directory>
+        </whitelist>
+    </filter>
     <php>
         <env name="APPLICATION_ENV" value="development" />
     </php>

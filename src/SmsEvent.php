@@ -1,5 +1,4 @@
 <?php
-
 namespace Zfegg\SmsSender;
 
 use Zend\EventManager\Event;
@@ -15,9 +14,13 @@ class SmsEvent extends Event
     const EVENT_POST_SEND = 'sms.send.post';
     const EVENT_INVALID   = 'sms.invalid';
 
-    protected $phoneNumber, $content, $error;
+    protected $phoneNumber;
+    protected $content;
+    protected $error;
 
     /**
+     * Get a content
+     *
      * @return string
      */
     public function getContent()
@@ -26,6 +29,8 @@ class SmsEvent extends Event
     }
 
     /**
+     * Set a content
+     *
      * @param string $content
      * @return $this
      */

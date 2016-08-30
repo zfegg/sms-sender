@@ -1,6 +1,10 @@
 短信发送抽象接口
 ==============
 
+[![Build Status](https://travis-ci.org/zfegg/sms-sender.png)](https://travis-ci.org/zfegg/sms-sender)
+[![Coverage Status](https://coveralls.io/repos/github/zfegg/sms-sender/badge.svg?branch=master)](https://coveralls.io/github/zfegg/sms-sender?branch=master)
+[![Latest Stable Version](https://poser.pugx.org/zfegg/sms-sender/v/stable.png)](https://packagist.org/packages/zfegg/sms-sender)
+
 抽象常用短信业务:
 
 1. 实现短信的限制发送（60s 内限制发送1次，1天上限发送10次）

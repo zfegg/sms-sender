@@ -43,7 +43,6 @@
     "suggest": {
         "zendframework/zend-cache": "LimitSendListener,SmsCode required",
         "zendframework/zend-i18n": "PhoneNumber validation required",
-        "zendframework/zend-captcha": "SmsCode required",
         "zendframework/zend-inputfilter": "ValidationListener required"
     }
 }

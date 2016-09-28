@@ -4,15 +4,14 @@ namespace Zfegg\SmsSender\Captcha;
 
 use Zend\Cache\Storage\Adapter\AbstractAdapter as AbstractCacheAdapter;
 use Zend\Cache\StorageFactory;
-use Zend\Captcha\AbstractAdapter;
-use Zend\Validator\Exception;
+use Zend\Validator\AbstractValidator;
 
 /**
  * Class SmsCode
  *
  * @package Zfegg\SmsSender\Captcha
  */
-class SmsCode extends AbstractAdapter
+class SmsCode extends AbstractValidator
 {
     const MISSING_PHONE_NUMBER_INPUT = 'missingPhoneNumberInput';
     const EXPIRE_CODE = 'expireCode';
@@ -201,13 +200,5 @@ class SmsCode extends AbstractAdapter
         }
 
         return $code;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getHelperName()
-    {
-        return 'formtext';
     }
 }

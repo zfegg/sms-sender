@@ -65,7 +65,8 @@ class SmsSender implements EventManagerAwareInterface
         try {
             $result = $this->getProvider()->send($phoneNumber, $content);
             $event->setParam('result', $result);
-            $events->trigger(SmsEvent::EVENT_POST_SEND, $event);
+            $event->setName(SmsEvent::EVENT_POST_SEND);
+            $events->triggerEvent($event);
             return true;
         } catch (\Exception $e) {
             $event->setParam('exception', $e);

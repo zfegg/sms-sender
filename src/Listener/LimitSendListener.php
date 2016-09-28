@@ -2,11 +2,11 @@
 
 namespace Zfegg\SmsSender\Listener;
 
-use Zend\Cache\StorageFactory;
-use Zfegg\SmsSender\SmsEvent;
 use Zend\Cache\Storage\Adapter\AbstractAdapter;
+use Zend\Cache\StorageFactory;
 use Zend\EventManager\AbstractListenerAggregate;
 use Zend\EventManager\EventManagerInterface;
+use Zfegg\SmsSender\SmsEvent;
 
 /**
  * Class LimitSendListener

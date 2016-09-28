@@ -3,12 +3,10 @@
 namespace Zfegg\SmsSender\Factory;
 
 use Interop\Container\ContainerInterface;
-use Zfegg\SmsSender\Captcha\SmsCode;
-use Zend\Cache\StorageFactory;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\Stdlib\ArrayUtils;
 use Zend\Validator\ValidatorPluginManager;
+use Zfegg\SmsSender\Captcha\SmsCode;
 
 /**
  * Class SmsCodeValidatorFactory

@@ -42,16 +42,21 @@ class SmsSenderTest extends \PHPUnit_Framework_TestCase
 
         $provider  = $this->getProviderMock();
         $smsSender = new SmsSender($provider);
+        $events = $smsSender->getEventManager();
 
+        //Test send success
+        $events->attach(SmsEvent::EVENT_POST_SEND, function (SmsEvent $event) use ($phoneNumber) {
+            $this->assertEquals($phoneNumber, $event->getPhoneNumber());
+        });
         $this->assertTrue($smsSender->send($phoneNumber, $content));
 
-        $events = $smsSender->getEventManager();
 
         $invalidEventName = '';
         $invalidCall      = function (SmsEvent $event) use (&$invalidEventName) {
             $this->assertEquals($invalidEventName, $event->getError());
         };
         $events->attach(SmsEvent::EVENT_INVALID, $invalidCall);
+
 
         //Assert pre send invalid
         $invalidEventName = SmsEvent::EVENT_PRE_SEND;

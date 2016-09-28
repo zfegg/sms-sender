@@ -214,7 +214,7 @@ return [
                     [
                         'name' => SmsCode::class,
                         'options' => [
-                            'input_name' => 'phone',
+                            'inputName' => 'phone',
                             'cache' => 'SmsCache'
                         ]
                     ]

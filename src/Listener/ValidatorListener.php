@@ -2,11 +2,11 @@
 
 namespace Zfegg\SmsSender\Listener;
 
+use Zend\EventManager\AbstractListenerAggregate;
+use Zend\EventManager\EventManagerInterface;
 use Zend\InputFilter\Factory;
 use Zend\InputFilter\InputFilter;
 use Zfegg\SmsSender\SmsEvent;
-use Zend\EventManager\AbstractListenerAggregate;
-use Zend\EventManager\EventManagerInterface;
 
 /**
  * Class ValidatorListener

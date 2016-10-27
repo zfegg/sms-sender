@@ -145,12 +145,15 @@ class SmsCode extends AbstractValidator
      */
     public function isValid($value, $context = null)
     {
-        if (!(is_array($context) && isset($context[$this->getInputName()]))) {
-            $this->error(self::MISSING_PHONE_NUMBER_INPUT);
-            return false;
+        if (!$phoneNumber = $this->getPhoneNumber()) {
+            if (!(is_array($context) && isset($context[$this->getInputName()]))) {
+                $this->error(self::MISSING_PHONE_NUMBER_INPUT);
+                return false;
+            }
+
+            $phoneNumber = $context[$this->getInputName()];
         }
 
-        $phoneNumber = $context[$this->getInputName()];
         $cache = $this->getCache();
         if ($data = $cache->getItem($phoneNumber)) {
             if ($data[0] != $value) {

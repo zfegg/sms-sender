@@ -79,7 +79,7 @@ class LimitSendListener extends AbstractListenerAggregate
     }
 
     /**
-     * @{@inheritdoc}
+     * {@inheritdoc}
      */
     public function attach(EventManagerInterface $events, $priority = 1)
     {
@@ -92,6 +92,8 @@ class LimitSendListener extends AbstractListenerAggregate
             return;
         }
 
+        $e->setParam(__CLASS__, $this);
+
         $time        = time();
         $phoneNumber = $e->getPhoneNumber();
         $cache       = $this->getCache();
@@ -99,10 +101,14 @@ class LimitSendListener extends AbstractListenerAggregate
         $waitingTime = $this->getWaitingTime();
 
         if ($success && $time - $limitTime <= $waitingTime) {
+            $waitingSec = $waitingTime - ($time - $limitTime);
+
             $error = $this->getMessage('waitingLock', [
-                '%sec%'         => $waitingTime - ($time - $limitTime),
+                '%sec%'         => $waitingSec,
                 '%phoneNumber%' => $phoneNumber
             ]);
+
+            $e->setParam('waitingSec', $waitingSec);
             $e->setError($error);
             $e->stopPropagation(true);
             return;
@@ -122,13 +128,16 @@ class LimitSendListener extends AbstractListenerAggregate
 
         $defaultTtl = $cache->getOptions()->getTtl();
 
+        //缓存当天发送次数
         $cache->getOptions()->setTtl(strtotime(date('Y-m-d 23:59:59')) - $time);
         $cache->setItem($sendTimesCacheId, $currentTimes);
 
+        //缓存本次发送锁定
         $cache->getOptions()->setTtl($waitingTime);
         $cache->setItem($phoneNumber, $time);
-
         $cache->getOptions()->setTtl($defaultTtl);
+
+        $e->setParam('waitingSec', $waitingTime);
     }
 
     private function getMessage($code, array $variables = [])

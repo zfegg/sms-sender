@@ -142,5 +142,7 @@ class SmsSenderTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(SmsSender::class, $smsSender);
         $this->assertTrue($smsSender->send(15000000000, 'content'));
         $this->assertFalse($smsSender->send('error', 'content'));
+        $this->assertTrue($smsSender->limitSend('15000000000', 'content'));
+        $this->assertFalse($smsSender->limitSend('15000000000', 'content'));
     }
 }

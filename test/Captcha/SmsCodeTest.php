@@ -21,63 +21,86 @@ class SmsCodeTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($wordlen, strlen($code[0]));
         $this->assertTrue(is_numeric($code[0]));
         $this->assertTrue(is_numeric($code[1]));
+
+        $code2 = $smsCode->generate('15000000000');
+        $this->assertEquals($code[0], $code2[0]);
     }
 
-    public function testIsValid()
+    public function isValidData()
     {
-        $phoneNumber = '15000000000';
-        $smsCode     = $this->getSmsCode();
+        $smsCode = $this->getSmsCode();
+
+        return [
+            'SuccessWithGetPhoneNumber' => [
+                $this->getSmsCode(),
+                '15000000000',
+                [],
+                true,
+                true,
+            ],
+            'SuccessContext' => [
+                $smsCode,
+                '15000000000',
+                [
+                    'phone' => '15000000000',
+                ],
+                false,
+                true
+            ],
+            'InvalidCode' => [
+                $smsCode,
+                '15000000000',
+                [],
+                true,
+                false,
+                true
+            ]
+        ];
+    }
+
+    /**
+     * @dataProvider isValidData
+     */
+    public function testIsValid(SmsCode $smsCode,
+                                $phoneNumber,
+                                $context,
+                                $setPhoneNumber,
+                                $result,
+                                $testAllowTimes = false)
+    {
         $smsCode->setInputName('phone');
-        $smsCode->setPhoneNumber($phoneNumber);
-        $code = $smsCode->generate();
+        $code = $smsCode->generate($phoneNumber);
+        $setPhoneNumber && $smsCode->setPhoneNumber($phoneNumber);
 
-        $this->assertTrue(
-            $smsCode->isValid(
-                $code[0],
-                [
-                'phone' => $phoneNumber,
-                ]
-            )
-        );
-        //Invalid second
-        $this->assertFalse(
-            $smsCode->isValid(
-                $code[0],
-                [
-                'phone' => $phoneNumber,
-                ]
-            )
-        );
+        if ($testAllowTimes) {
+            $code[0] = 'fail';
+        }
 
-        //Test valid failure
-        $smsCode->generate();
-        $this->assertFalse(
-            $smsCode->isValid(
-                'fail',
-                [
-                'phone' => $phoneNumber,
-                ]
-            )
-        );
-        $this->assertEquals(2, $smsCode->getAllowValidationTimes());
-        $this->assertFalse(
-            $smsCode->isValid(
-                'fail',
-                [
-                'phone' => $phoneNumber,
-                ]
-            )
-        );
-        $this->assertEquals(1, $smsCode->getAllowValidationTimes());
-        $this->assertFalse(
-            $smsCode->isValid(
-                'fail',
-                [
-                'phone' => $phoneNumber,
-                ]
-            )
-        );
-        $this->assertEquals(0, $smsCode->getAllowValidationTimes());
+        //getPhoneNumber
+        $this->assertEquals($result, $smsCode->isValid($code[0], $context));
+
+        if ($testAllowTimes) {
+            //Test valid failure
+            $this->assertEquals(2, $smsCode->getAllowValidationTimes());
+            $this->assertFalse(
+                $smsCode->isValid(
+                    'fail',
+                    [
+                        'phone' => $phoneNumber,
+                    ]
+                )
+            );
+            $this->assertEquals(1, $smsCode->getAllowValidationTimes());
+            $this->assertFalse(
+                $smsCode->isValid(
+                    'fail',
+                    [
+                        'phone' => $phoneNumber,
+                    ]
+                )
+            );
+            $this->assertEquals(0, $smsCode->getAllowValidationTimes());
+        }
     }
 
     /**
@@ -85,10 +108,10 @@ class SmsCodeTest extends \PHPUnit_Framework_TestCase
      */
     public function testFactory()
     {
-        $configs  = (new Module())->getConfig();
+        $configs = (new Module())->getConfig();
         $smConfig = $configs['service_manager'];
         $smConfig = ArrayUtils::merge($smConfig, (new ConfigProvider())->getDependencyConfig());
-        $sm       = new ServiceManager($smConfig);
+        $sm = new ServiceManager($smConfig);
         $sm->setService('TestCache', StorageFactory::factory($this->getCacheConfig()));
 
         /** @var \Zend\Validator\ValidatorPluginManager $validators */
@@ -118,7 +141,7 @@ class SmsCodeTest extends \PHPUnit_Framework_TestCase
         return new SmsCode(
             [
                 'wordlen' => $wordlen,
-                'cache'   => $this->getCacheConfig()
+                'cache' => $this->getCacheConfig()
             ]
         );
     }

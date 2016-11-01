@@ -42,9 +42,28 @@ class LimitSendListenerTest extends \PHPUnit_Framework_TestCase
 
         //Test day send times
         $e->setError(null);
+        $listener->clearLock($e->getPhoneNumber());
         $cache->setItem($e->getPhoneNumber() . 'Times', 20);
         $events->triggerEvent($e);
         $this->assertTrue((bool)$e->getError());
+    }
+
+    public function testClear()
+    {
+        $phoneNumber = '15000000000';
+        $events = new EventManager();
+        $listener = new LimitSendListener([
+            'cache' => $cache = $this->getCache(),
+        ]);
+        $listener->attach($events);
+
+        $e = new SmsEvent(SmsEvent::EVENT_PRE_SEND);
+        $e->setPhoneNumber($phoneNumber);
+        $e->setContent('testContent');
+        $events->triggerEvent($e);
+
+        $listener->clearLock($phoneNumber);
+        $this->assertNull($listener->getCache()->getItem($phoneNumber));
     }
 
     public function getCache()

@@ -61,13 +61,15 @@ class SmsCodeTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider isValidData
      */
-    public function testIsValid(SmsCode $smsCode,
-                                $phoneNumber,
-                                $context,
-                                $setPhoneNumber,
-                                $result,
-                                $testAllowTimes = false)
-    {
+    public function testIsValid(
+        SmsCode $smsCode,
+        $phoneNumber,
+        $context,
+        $setPhoneNumber,
+        $result,
+        $testAllowTimes = false
+    ) {
+
         $smsCode->setInputName('phone');
         $code = $smsCode->generate($phoneNumber);
         $setPhoneNumber && $smsCode->setPhoneNumber($phoneNumber);

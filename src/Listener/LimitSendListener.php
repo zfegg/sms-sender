@@ -25,7 +25,7 @@ class LimitSendListener extends AbstractListenerAggregate
     protected $cache;
 
     protected $errorMessageTemplates = [
-        'waitingLock' => '请等待%sec%秒后在试',
+        'waitingLock' => '请等待%sec%秒后再试',
         'timesLock'   => '一个手机号每天只能发送%daySendTimes%次短信,您的手机号已超出限制,请次日在试.',
     ];
 

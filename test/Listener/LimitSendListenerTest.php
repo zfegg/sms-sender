@@ -1,6 +1,7 @@
 <?php
 namespace ZfeggTest\Listener;
 
+use Zend\Cache\Psr\SimpleCache\SimpleCacheDecorator;
 use Zend\Cache\StorageFactory;
 use Zend\EventManager\EventManager;
 use Zfegg\SmsSender\Listener\LimitSendListener;
@@ -11,15 +12,14 @@ class LimitSendListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnPreSend()
     {
+        $cache = $this->getCache();
         $events = new EventManager();
-        $listener = new LimitSendListener([
-            'cache' => $cache = $this->getCache(),
-        ]);
+        $listener = new LimitSendListener($cache);
         $listener->attach($events);
 
         $e = new SmsEvent(SmsEvent::EVENT_PRE_SEND);
         //Test success
-        $e->setPhoneNumber(15000000000);
+        $e->setPhoneNumber('15000000000');
         $e->setContent('testContent');
 
         //Test ignore.
@@ -30,31 +30,30 @@ class LimitSendListenerTest extends \PHPUnit_Framework_TestCase
 
         //Test waiting time limit.
         $e->setError(null);
-        $cache->setItem($e->getPhoneNumber(), time()-10);
+        $cache->set($e->getPhoneNumber(), time()-10);
         $events->triggerEvent($e);
         $this->assertTrue((bool)$e->getError());
 
         //Test waiting time limit 2.
         $e->setError(null);
-        $cache->setItem($e->getPhoneNumber(), time()-61);
+        $cache->set($e->getPhoneNumber(), time()-61);
         $events->triggerEvent($e);
-        $this->assertFalse((bool)$e->getError());
+        $this->assertFalse((bool)$e->getError(), $e->getError());
 
         //Test day send times
         $e->setError(null);
         $listener->clearLock($e->getPhoneNumber());
-        $cache->setItem($e->getPhoneNumber() . 'Times', 20);
+        $cache->set($e->getPhoneNumber() . 'Times', 20);
         $events->triggerEvent($e);
         $this->assertTrue((bool)$e->getError());
     }
 
     public function testClear()
     {
+        $cache = $this->getCache();
         $phoneNumber = '15000000000';
         $events = new EventManager();
-        $listener = new LimitSendListener([
-            'cache' => $cache = $this->getCache(),
-        ]);
+        $listener = new LimitSendListener($cache);
         $listener->attach($events);
 
         $e = new SmsEvent(SmsEvent::EVENT_PRE_SEND);
@@ -63,16 +62,20 @@ class LimitSendListenerTest extends \PHPUnit_Framework_TestCase
         $events->triggerEvent($e);
 
         $listener->clearLock($phoneNumber);
-        $this->assertNull($listener->getCache()->getItem($phoneNumber));
+        $this->assertNull($cache->get($phoneNumber));
     }
 
     public function getCache()
     {
-        return StorageFactory::factory([
-            'adapter' => 'Memory',
+        $cache = StorageFactory::factory([
+            'adapter' => 'Memory', //Filesystem Memory
             'options' => [
+                'ttl' => 86400,
                 'namespace' => 'Sms',
             ],
+            'plugins' => ['Serializer']
         ]);
+
+        return new SimpleCacheDecorator($cache);
     }
 }

@@ -2,8 +2,7 @@
 
 namespace Zfegg\SmsSender\Listener;
 
-use Zend\Cache\Storage\Adapter\AbstractAdapter;
-use Zend\Cache\StorageFactory;
+use Psr\SimpleCache\CacheInterface;
 use Zend\EventManager\AbstractListenerAggregate;
 use Zend\EventManager\EventManagerInterface;
 use Zfegg\SmsSender\SmsEvent;
@@ -22,6 +21,9 @@ class LimitSendListener extends AbstractListenerAggregate
 
     protected $daySendTimes = 10;
 
+    /**
+     * @var CacheInterface
+     */
     protected $cache;
 
     protected $errorMessageTemplates = [
@@ -29,53 +31,11 @@ class LimitSendListener extends AbstractListenerAggregate
         'timesLock'   => '一个手机号每天只能发送%daySendTimes%次短信,您的手机号已超出限制,请次日在试.',
     ];
 
-    public function __construct($options = [])
+    public function __construct(CacheInterface $cache, $daySendTimes = 10, $waitingTime = 60)
     {
-        $this->setOptions($options);
-    }
-
-    /**
-     * Configure state
-     *
-     * @param  array $options
-     * @return $this
-     */
-    public function setOptions(array $options)
-    {
-        foreach ($options as $key => $value) {
-            $method = 'set' . str_replace(' ', '', ucwords(str_replace('_', ' ', $key)));
-            if (method_exists($this, $method)) {
-                $this->{$method}($value);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * Get limit cache
-     *
-     * @return AbstractAdapter
-     */
-    public function getCache()
-    {
-        return $this->cache;
-    }
-
-    /**
-     * Set limit cache
-     *
-     * @param AbstractAdapter|array $cache
-     * @return $this
-     */
-    public function setCache($cache)
-    {
-        if (is_array($cache)) {
-            $cache = StorageFactory::factory($cache);
-        }
-
         $this->cache = $cache;
-        return $this;
+        $this->setDaySendTimes($daySendTimes);
+        $this->setWaitingTime($waitingTime);
     }
 
     /**
@@ -96,26 +56,26 @@ class LimitSendListener extends AbstractListenerAggregate
 
         $time        = time();
         $phoneNumber = $e->getPhoneNumber();
-        $cache       = $this->getCache();
-        $limitTime   = $cache->getItem($phoneNumber, $success);
+        $cache       = $this->cache;
+        $limitTime   = $cache->get($phoneNumber);
         $waitingTime = $this->getWaitingTime();
+        $waitingSec  = $waitingTime - ($time - $limitTime);
 
-        if ($success && $time - $limitTime <= $waitingTime) {
-            $waitingSec = $waitingTime - ($time - $limitTime);
+        $e->setParam('waitingSec', $waitingSec);
 
+        if ($limitTime && $waitingSec > 0) {
             $error = $this->getMessage('waitingLock', [
                 '%sec%'         => $waitingSec,
                 '%phoneNumber%' => $phoneNumber
             ]);
 
-            $e->setParam('waitingSec', $waitingSec);
             $e->setError($error);
             $e->stopPropagation(true);
             return;
         }
 
         $sendTimesCacheId = $phoneNumber . 'Times';
-        if (($currentTimes = (int)$cache->getItem($sendTimesCacheId)) && $currentTimes >= $this->getDaySendTimes()) {
+        if (($currentTimes = (int)$cache->get($sendTimesCacheId)) && $currentTimes >= $this->getDaySendTimes()) {
             $error = $this->getMessage('timesLock', [
                 '%phoneNumber%' => $phoneNumber
             ]);
@@ -126,24 +86,21 @@ class LimitSendListener extends AbstractListenerAggregate
 
         $currentTimes++;
 
-        $defaultTtl = $cache->getOptions()->getTtl();
-
         //缓存当天发送次数
-        $cache->getOptions()->setTtl(strtotime(date('Y-m-d 23:59:59')) - $time);
-        $cache->setItem($sendTimesCacheId, $currentTimes);
+        $cache->set(
+            $sendTimesCacheId,
+            $currentTimes,
+            strtotime(date('Y-m-d 23:59:59')) - $time
+        );
 
         //缓存本次发送锁定
-        $cache->getOptions()->setTtl($waitingTime);
-        $cache->setItem($phoneNumber, $time);
-        $cache->getOptions()->setTtl($defaultTtl);
-
-        $e->setParam('waitingSec', $waitingTime);
+        $cache->set($phoneNumber, $time, $waitingTime);
     }
 
     private function getMessage($code, array $variables = [])
     {
         $variables['%daySendTimes%'] = $this->getDaySendTimes();
-        $variables['%waitingTime%']     = $this->getWaitingTime();
+        $variables['%waitingTime%']  = $this->getWaitingTime();
 
         return str_replace(array_keys($variables), $variables, $this->errorMessageTemplates[$code]);
     }
@@ -152,11 +109,13 @@ class LimitSendListener extends AbstractListenerAggregate
      * Clear number limit.
      *
      * @param $phoneNumber
+     *
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function clearLock($phoneNumber)
     {
-        $this->getCache()->removeItem($phoneNumber);
-        $this->getCache()->removeItem($phoneNumber . 'Times');
+        $this->cache->delete($phoneNumber);
+        $this->cache->delete($phoneNumber . 'Times');
     }
 
     /**

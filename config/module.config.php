@@ -1,14 +1,22 @@
 <?php
 
+use Zfegg\SmsSender\Captcha\SmsCode;
+use Zfegg\SmsSender\Factory\LimitSendListenerFactory;
+use Zfegg\SmsSender\Factory\SmsCodeCaptchaFactory;
+use Zfegg\SmsSender\Factory\SmsSenderFactory;
+use Zfegg\SmsSender\Listener\LimitSendListener;
+use Zfegg\SmsSender\SmsSender;
+
 return [
     'service_manager' => [
         'factories' => [
-            \Zfegg\SmsSender\SmsSender::class => \Zfegg\SmsSender\Factory\SmsSenderFactory::class,
+            SmsSender::class => SmsSenderFactory::class,
+            LimitSendListener::class => LimitSendListenerFactory::class,
         ]
     ],
     'validators' => [
         'factories' => [
-            \Zfegg\SmsSender\Captcha\SmsCode::class => \Zfegg\SmsSender\Factory\SmsCodeCaptchaFactory::class,
+            SmsCode::class => SmsCodeCaptchaFactory::class,
         ]
     ]
 ];

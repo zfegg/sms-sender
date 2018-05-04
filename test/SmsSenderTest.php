@@ -2,6 +2,8 @@
 
 namespace ZfeggTest\SmsSender;
 
+use Zend\Cache\Psr\SimpleCache\SimpleCacheDecorator;
+use Zend\Cache\StorageFactory;
 use Zend\Captcha\Dumb;
 use Zend\ServiceManager\ServiceManager;
 use Zfegg\SmsSender\Listener\LimitSendListener;
@@ -124,18 +126,23 @@ class SmsSenderTest extends \PHPUnit_Framework_TestCase
                             'options' => [
                                 'waiting_time'   => 10,
                                 'day_send_times' => 5,
-                                'cache'          => [
-                                    'adapter' => 'Memory',
-                                    'options' => [
-                                        'namespace' => 'Sms',
-                                    ],
-                                ]
+                                'cache'          => 'cache.demo'
                             ]
                         ],
-                    ]
+                    ],
                 ]
             ]
         );
+
+        $cache =  new SimpleCacheDecorator(StorageFactory::factory([
+            'adapter' => 'Memory', //Filesystem Memory
+            'options' => [
+                'ttl' => 86400,
+                'namespace' => 'Sms',
+            ],
+        ]));
+
+        $sm->setService('cache.demo', $cache);
 
         /** @var SmsSender $smsSender */
         $smsSender = $sm->get(SmsSender::class);

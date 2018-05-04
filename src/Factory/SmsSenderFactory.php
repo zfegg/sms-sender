@@ -4,8 +4,7 @@ namespace Zfegg\SmsSender\Factory;
 
 use Interop\Container\ContainerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 use Zfegg\SmsSender\Provider\ProviderInterface;
 use Zfegg\SmsSender\SmsSender;
 
@@ -16,11 +15,6 @@ use Zfegg\SmsSender\SmsSender;
  */
 class SmsSenderFactory implements FactoryInterface
 {
-
-    public function createService(ServiceLocatorInterface $serviceLocator)
-    {
-        return $this($serviceLocator, SmsSender::class);
-    }
 
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {

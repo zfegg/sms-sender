@@ -11,7 +11,7 @@ interface ProviderInterface
 {
 
     /**
-     * @param $phoneNumber
+     * @param string $phoneNumber
      * @param $content
      * @return mixed
      */

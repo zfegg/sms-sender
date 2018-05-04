@@ -3,9 +3,7 @@
 namespace Zfegg\SmsSender\Factory;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\Validator\ValidatorPluginManager;
+use Zend\ServiceManager\Factory\FactoryInterface;
 use Zfegg\SmsSender\Captcha\SmsCode;
 
 /**
@@ -32,14 +30,5 @@ class SmsCodeCaptchaFactory implements FactoryInterface
         }
 
         return new SmsCode($options);
-    }
-
-    public function createService(ServiceLocatorInterface $serviceLocator)
-    {
-        if ($serviceLocator instanceof ValidatorPluginManager) {
-            $serviceLocator = $serviceLocator->getServiceLocator();
-        }
-
-        return $this($serviceLocator, SmsCode::class, $this->createOptions);
     }
 }

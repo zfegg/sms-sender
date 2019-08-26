@@ -2,6 +2,7 @@
 
 namespace ZfeggTest\SmsSender;
 
+use Cache\Adapter\PHPArray\ArrayCachePool;
 use Zend\Cache\Psr\SimpleCache\SimpleCacheDecorator;
 use Zend\Cache\StorageFactory;
 use Zend\Captcha\Dumb;
@@ -134,13 +135,7 @@ class SmsSenderTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $cache =  new SimpleCacheDecorator(StorageFactory::factory([
-            'adapter' => 'Memory', //Filesystem Memory
-            'options' => [
-                'ttl' => 86400,
-                'namespace' => 'Sms',
-            ],
-        ]));
+        $cache =  new ArrayCachePool();
 
         $sm->setService('cache.demo', $cache);
 

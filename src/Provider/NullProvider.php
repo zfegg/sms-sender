@@ -8,7 +8,7 @@ use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
-class MockProvider implements ProviderInterface, LoggerAwareInterface
+class NullProvider implements ProviderInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 

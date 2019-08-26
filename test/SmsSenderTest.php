@@ -3,6 +3,7 @@
 namespace ZfeggTest\SmsSender;
 
 use Cache\Adapter\PHPArray\ArrayCachePool;
+use PHPUnit\Framework\TestCase;
 use Zend\ServiceManager\ServiceManager;
 use Zfegg\SmsSender\Listener\LimitSendListener;
 use Zfegg\SmsSender\Listener\ValidatorListener;
@@ -12,14 +13,10 @@ use Zfegg\SmsSender\SmsEvent;
 use Zfegg\SmsSender\SmsSender;
 use ZfeggTest\SmsSender\Provider\ExampleProvider;
 
-class SmsSenderTest extends \PHPUnit_Framework_TestCase
+class SmsSenderTest extends TestCase
 {
     /** @var  SmsSender */
     protected $smsSender;
-
-    public function setUp()
-    {
-    }
 
     /**
      * @param null $exception

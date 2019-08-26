@@ -2,11 +2,12 @@
 namespace ZfeggTest\Listener;
 
 use Cache\Adapter\PHPArray\ArrayCachePool;
+use PHPUnit\Framework\TestCase;
 use Zend\EventManager\EventManager;
 use Zfegg\SmsSender\Listener\LimitSendListener;
 use Zfegg\SmsSender\SmsEvent;
 
-class LimitSendListenerTest extends \PHPUnit_Framework_TestCase
+class LimitSendListenerTest extends TestCase
 {
 
     public function testOnPreSend()
@@ -37,7 +38,7 @@ class LimitSendListenerTest extends \PHPUnit_Framework_TestCase
         $e->setError(null);
         $cache->set($e->getPhoneNumber(), time()-61);
         $events->triggerEvent($e);
-        $this->assertFalse((bool)$e->getError(), $e->getError());
+        $this->assertFalse((bool)$e->getError(), $e->getError() . '');
 
         //Test day send times
         $e->setError(null);

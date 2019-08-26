@@ -1,12 +1,13 @@
 <?php
 namespace ZfeggTest\Listener;
 
+use PHPUnit\Framework\TestCase;
 use Zend\EventManager\EventManager;
 use Zend\InputFilter\InputFilter;
 use Zfegg\SmsSender\Listener\ValidatorListener;
 use Zfegg\SmsSender\SmsEvent;
 
-class ValidatorListenerTest extends \PHPUnit_Framework_TestCase
+class ValidatorListenerTest extends TestCase
 {
 
     public function testOnValid()

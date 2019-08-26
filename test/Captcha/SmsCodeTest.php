@@ -1,6 +1,7 @@
 <?php
 namespace ZfeggTest\Captcha;
 
+use PHPUnit\Framework\TestCase;
 use Zend\Cache\StorageFactory;
 use Zend\ServiceManager\ServiceManager;
 use Zend\Stdlib\ArrayUtils;
@@ -8,7 +9,7 @@ use Zend\Validator\ConfigProvider;
 use Zfegg\SmsSender\Captcha\SmsCode;
 use Zfegg\SmsSender\Module;
 
-class SmsCodeTest extends \PHPUnit_Framework_TestCase
+class SmsCodeTest extends TestCase
 {
 
     public function testGenerate()

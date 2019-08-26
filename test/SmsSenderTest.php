@@ -3,9 +3,6 @@
 namespace ZfeggTest\SmsSender;
 
 use Cache\Adapter\PHPArray\ArrayCachePool;
-use Zend\Cache\Psr\SimpleCache\SimpleCacheDecorator;
-use Zend\Cache\StorageFactory;
-use Zend\Captcha\Dumb;
 use Zend\ServiceManager\ServiceManager;
 use Zfegg\SmsSender\Listener\LimitSendListener;
 use Zfegg\SmsSender\Listener\ValidatorListener;

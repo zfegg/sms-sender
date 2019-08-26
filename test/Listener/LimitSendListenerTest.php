@@ -1,8 +1,7 @@
 <?php
 namespace ZfeggTest\Listener;
 
-use Zend\Cache\Psr\SimpleCache\SimpleCacheDecorator;
-use Zend\Cache\StorageFactory;
+use Cache\Adapter\PHPArray\ArrayCachePool;
 use Zend\EventManager\EventManager;
 use Zfegg\SmsSender\Listener\LimitSendListener;
 use Zfegg\SmsSender\SmsEvent;
@@ -67,15 +66,6 @@ class LimitSendListenerTest extends \PHPUnit_Framework_TestCase
 
     public function getCache()
     {
-        $cache = StorageFactory::factory([
-            'adapter' => 'Memory', //Filesystem Memory
-            'options' => [
-                'ttl' => 86400,
-                'namespace' => 'Sms',
-            ],
-            'plugins' => ['Serializer']
-        ]);
-
-        return new SimpleCacheDecorator($cache);
+        return new ArrayCachePool();
     }
 }

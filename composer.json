@@ -1,6 +1,7 @@
 {
     "name": "zfegg/sms-sender",
     "description": "SMS abstract factory service.",
+    "license": "MIT",
     "type": "library",
     "keywords": [
         "sms",

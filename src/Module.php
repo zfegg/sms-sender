@@ -2,11 +2,6 @@
 
 namespace Zfegg\SmsSender;
 
-/**
- * Class Module
- *
- * @package Zfegg\SmsSender
- */
 class Module
 {
 

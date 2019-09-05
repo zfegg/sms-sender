@@ -5,7 +5,7 @@ use Cache\Adapter\PHPArray\ArrayCachePool;
 use PHPUnit\Framework\TestCase;
 use Zend\EventManager\EventManager;
 use Zfegg\SmsSender\Listener\LimitSendListener;
-use Zfegg\SmsSender\SmsEvent;
+use Zfegg\SmsSender\SendResultEvent;
 
 class LimitSendListenerTest extends TestCase
 {
@@ -17,7 +17,7 @@ class LimitSendListenerTest extends TestCase
         $listener = new LimitSendListener($cache);
         $listener->attach($events);
 
-        $e = new SmsEvent(SmsEvent::EVENT_PRE_SEND);
+        $e = new SendResultEvent(SendResultEvent::EVENT_PRE_SEND);
         //Test success
         $e->setPhoneNumber('15000000000');
         $e->setContent('testContent');
@@ -56,7 +56,7 @@ class LimitSendListenerTest extends TestCase
         $listener = new LimitSendListener($cache);
         $listener->attach($events);
 
-        $e = new SmsEvent(SmsEvent::EVENT_PRE_SEND);
+        $e = new SendResultEvent(SendResultEvent::EVENT_PRE_SEND);
         $e->setPhoneNumber($phoneNumber);
         $e->setContent('testContent');
         $events->triggerEvent($e);

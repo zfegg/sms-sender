@@ -3,6 +3,7 @@
 namespace Zfegg\SmsSender\Factory;
 
 use Interop\Container\ContainerInterface;
+use Psr\SimpleCache\CacheInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Zfegg\SmsSender\Captcha\SmsCode;
 
@@ -23,10 +24,16 @@ class SmsCodeCaptchaFactory implements FactoryInterface
 
     public function __invoke(ContainerInterface $services, $requestedName, array $options = null)
     {
-        if (isset($options['cache'])) {
-            if (is_string($options['cache'])) {
-                $options['cache'] = $services->get($options['cache']);
-            }
+        if (! isset($options['cache'])) {
+            $options['cache'] = CacheInterface::class;
+        }
+
+        if (is_string($options['cache'])) {
+            $options['cache'] = $services->get($options['cache']);
+        }
+
+        if (empty($options['cache']) || ! $options['cache'] instanceof CacheInterface) {
+            throw new \RuntimeException('"cache" option required');
         }
 
         return new SmsCode($options);

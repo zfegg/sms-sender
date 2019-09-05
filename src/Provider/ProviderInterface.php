@@ -2,6 +2,8 @@
 
 namespace Zfegg\SmsSender\Provider;
 
+use Zfegg\SmsSender\Result;
+
 /**
  * Class ProviderInterface
  *
@@ -12,8 +14,8 @@ interface ProviderInterface
 
     /**
      * @param string $phoneNumber
-     * @param $content
-     * @return mixed
+     * @param string $content
+     * @return Result
      */
-    public function send($phoneNumber, $content);
+    public function send(string $phoneNumber, string $content): Result;
 }

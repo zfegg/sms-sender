@@ -19,13 +19,13 @@ class ExampleProvider implements ProviderInterface
      * @param $content
      * @return mixed
      */
-    public function send($phoneNumber, $content)
+    public function send($phoneNumber, $content): \Zfegg\SmsSender\Result
     {
         if ($content == 'send error test') {
             throw new \RuntimeException('An exception.');
         }
 
-        return true;
+        return new \Zfegg\SmsSender\Result();
     }
 }
 

@@ -5,11 +5,6 @@ namespace Zfegg\SmsSender\Captcha;
 use Psr\SimpleCache\CacheInterface;
 use Zend\Validator\AbstractValidator;
 
-/**
- * Class SmsCode
- *
- * @package Zfegg\SmsSender\Captcha
- */
 class SmsCode extends AbstractValidator
 {
     const MISSING_PHONE_NUMBER_INPUT = 'missingPhoneNumberInput';
@@ -28,7 +23,7 @@ class SmsCode extends AbstractValidator
 
     protected $phoneNumber;
 
-    protected $inputName;
+    protected $inputName = 'phone_number';
 
     /**
      * Length of the word to generate
@@ -43,6 +38,25 @@ class SmsCode extends AbstractValidator
      * @var int
      */
     protected $allowValidationTimes = 3;
+
+
+    protected $ttl = 300;
+
+    /**
+     * @return int
+     */
+    public function getTtl(): int
+    {
+        return $this->ttl;
+    }
+
+    /**
+     * @param int $ttl
+     */
+    public function setTtl(int $ttl): void
+    {
+        $this->ttl = $ttl;
+    }
 
     /**
      * @return CacheInterface
@@ -196,7 +210,7 @@ class SmsCode extends AbstractValidator
             $max = str_repeat(9, $this->getWordlen());
             $code = [mt_rand($min, $max), $this->getAllowValidationTimes()];
 
-            $cache->set($phoneNumber, $code);
+            $cache->set($phoneNumber, $code, $this->getTtl());
         }
 
         return $code;

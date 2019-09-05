@@ -10,7 +10,7 @@ use Zfegg\SmsSender\Listener\ValidatorListener;
 use Zfegg\SmsSender\Module;
 use Zfegg\SmsSender\Provider\NullProvider;
 use Zfegg\SmsSender\Provider\ProviderInterface;
-use Zfegg\SmsSender\SmsEvent;
+use Zfegg\SmsSender\SendResultEvent;
 use Zfegg\SmsSender\SmsSender;
 
 class SmsSenderTest extends TestCase
@@ -42,27 +42,27 @@ class SmsSenderTest extends TestCase
         $events = $smsSender->getEventManager();
 
         //Test send success
-        $events->attach(SmsEvent::EVENT_POST_SEND, function (SmsEvent $event) use ($phoneNumber) {
+        $events->attach(SendResultEvent::EVENT_POST_SEND, function (SendResultEvent $event) use ($phoneNumber) {
             $this->assertEquals($phoneNumber, $event->getPhoneNumber());
         });
         $this->assertTrue($smsSender->send($phoneNumber, $content));
 
 
         $invalidEventName = '';
-        $invalidCall      = function (SmsEvent $event) use (&$invalidEventName) {
+        $invalidCall      = function (SendResultEvent $event) use (&$invalidEventName) {
             $this->assertEquals($invalidEventName, $event->getError());
         };
-        $events->attach(SmsEvent::EVENT_INVALID, $invalidCall);
+        $events->attach(SendResultEvent::EVENT_INVALID, $invalidCall);
 
 
         //Assert pre send invalid
-        $invalidEventName = SmsEvent::EVENT_PRE_SEND;
-        $callback         = function (SmsEvent $event) {
-            $event->setError(SmsEvent::EVENT_PRE_SEND);
+        $invalidEventName = SendResultEvent::EVENT_PRE_SEND;
+        $callback         = function (SendResultEvent $event) {
+            $event->setError(SendResultEvent::EVENT_PRE_SEND);
         };
-        $events->attach(SmsEvent::EVENT_PRE_SEND, $callback);
+        $events->attach(SendResultEvent::EVENT_PRE_SEND, $callback);
         $this->assertFalse($smsSender->send($phoneNumber, $content));
-        $events->detach($callback, SmsEvent::EVENT_PRE_SEND);
+        $events->detach($callback, SendResultEvent::EVENT_PRE_SEND);
 
         //Provide send failure
         $invalidEventName = 'ThrowMessage';

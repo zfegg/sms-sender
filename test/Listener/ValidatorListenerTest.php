@@ -5,7 +5,7 @@ use PHPUnit\Framework\TestCase;
 use Zend\EventManager\EventManager;
 use Zend\InputFilter\InputFilter;
 use Zfegg\SmsSender\Listener\ValidatorListener;
-use Zfegg\SmsSender\SmsEvent;
+use Zfegg\SmsSender\SendResultEvent;
 
 class ValidatorListenerTest extends TestCase
 {
@@ -16,7 +16,7 @@ class ValidatorListenerTest extends TestCase
         $listener = new ValidatorListener();
         $listener->attach($events);
 
-        $e = new SmsEvent(SmsEvent::EVENT_PRE_SEND);
+        $e = new SendResultEvent(SendResultEvent::EVENT_PRE_SEND);
 
         //Test success
         $e->setPhoneNumber(15000000000);

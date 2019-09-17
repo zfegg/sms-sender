@@ -5,3 +5,5 @@ vendor/
 
 #ide
 .idea
+
+.phpunit.result.cache

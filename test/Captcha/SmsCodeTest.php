@@ -1,14 +1,15 @@
 <?php
 namespace ZfeggTest\Captcha;
 
-use Zend\Cache\StorageFactory;
+use Cache\Adapter\PHPArray\ArrayCachePool;
+use PHPUnit\Framework\TestCase;
 use Zend\ServiceManager\ServiceManager;
 use Zend\Stdlib\ArrayUtils;
 use Zend\Validator\ConfigProvider;
 use Zfegg\SmsSender\Captcha\SmsCode;
 use Zfegg\SmsSender\Module;
 
-class SmsCodeTest extends \PHPUnit_Framework_TestCase
+class SmsCodeTest extends TestCase
 {
 
     public function testGenerate()
@@ -114,7 +115,7 @@ class SmsCodeTest extends \PHPUnit_Framework_TestCase
         $smConfig = $configs['service_manager'];
         $smConfig = ArrayUtils::merge($smConfig, (new ConfigProvider())->getDependencyConfig());
         $sm = new ServiceManager($smConfig);
-        $sm->setService('TestCache', StorageFactory::factory($this->getCacheConfig()));
+        $sm->setService('TestCache', new ArrayCachePool());
 
         /** @var \Zend\Validator\ValidatorPluginManager $validators */
         $validators = $sm->get('ValidatorManager');
@@ -134,7 +135,7 @@ class SmsCodeTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(SmsCode::class, $validator);
 
         /** @var SmsCode $validator */
-        $validator = $validators->get(SmsCode::class, ['cache' => $this->getCacheConfig()]);
+        $validator = $validators->get(SmsCode::class, ['cache' => $this->getCache()]);
         $this->assertInstanceOf(SmsCode::class, $validator);
     }
 
@@ -143,18 +144,19 @@ class SmsCodeTest extends \PHPUnit_Framework_TestCase
         return new SmsCode(
             [
                 'wordlen' => $wordlen,
-                'cache' => $this->getCacheConfig()
+                'cache' => $this->getCache()
             ]
         );
     }
 
-    private function getCacheConfig()
+    private $cache;
+
+    private function getCache()
     {
-        return [
-            'adapter' => 'Memory',
-            'options' => [
-                'namespace' => 'Sms',
-            ],
-        ];
+        if (! $this->cache) {
+            $this->cache = new ArrayCachePool();
+        }
+
+        return $this->cache;
     }
 }

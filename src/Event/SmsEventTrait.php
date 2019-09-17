@@ -1,22 +1,17 @@
 <?php
-namespace Zfegg\SmsSender;
 
-use Zend\EventManager\Event;
 
-/**
- * Class SmsEvent
- *
- * @package Zfegg\SmsSender
- */
-class SmsEvent extends Event
+namespace Zfegg\SmsSender\Event;
+
+use Zfegg\SmsSender\Result;
+
+trait SmsEventTrait
 {
-    const EVENT_PRE_SEND  = 'sms.send.pre';
-    const EVENT_POST_SEND = 'sms.send.post';
-    const EVENT_INVALID   = 'sms.invalid';
-
     protected $phoneNumber;
+
     protected $content;
-    protected $error;
+
+    protected $result;
 
     /**
      * Get a content
@@ -59,20 +54,18 @@ class SmsEvent extends Event
     }
 
     /**
-     * @return string
+     * @return Result
      */
-    public function getError()
+    public function getResult(): ?Result
     {
-        return $this->error;
+        return $this->result;
     }
 
     /**
-     * @param string $error
-     * @return $this
+     * @param Result $result
      */
-    public function setError($error)
+    public function setResult(Result $result): void
     {
-        $this->error = $error;
-        return $this;
+        $this->result = $result;
     }
 }

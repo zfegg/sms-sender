@@ -18,91 +18,18 @@
 $ composer require zfegg/sms-sender
 ~~~
 
+
+## Interfaces / 接口说明
+
+* `Zfegg/SmsSender/Provider/ProviderInterface` 短信供应商实现接口
+
 ## Usage / 使用
 
-### 短信发送
+### 基本使用示例代码：
 
-#### 基本使用：
+[示例代码](examples/basic.php)
 
-~~~php
-
-use Zfegg\SmsSender\Listener\LimitSendListener;
-use Zfegg\SmsSender\Listener\ValidatorListener;
-use Zfegg\SmsSender\Provider\ProviderInterface;
-use Zfegg\SmsSender\SmsSender;
-
-require __DIR__ . '/../vendor/autoload.php';
-
-class ExampleProvider implements ProviderInterface
-{
-    public function __construct(array $options)
-    {
-
-    }
-
-    /**
-     * @param $phoneNumber
-     * @param $content
-     * @return mixed
-     */
-    public function send($phoneNumber, $content)
-    {
-        if ($content == 'send error test') {
-            throw new \RuntimeException('An exception.');
-        }
-
-        return true;
-    }
-}
-
-$smsSender = new SmsSender(new ExampleProvider(['app_id' => 'test']));
-
-$result = $smsSender->send('13000000000', 'TestContent');
-var_dump($result); //bool(true)
-
-$result = $smsSender->send('13000000000', 'send error test');
-var_dump(
-    $result,                            //bool(false)
-    $smsSender->getEvent()->getError(), //'An exception.'
-    get_class($smsSender->getEvent()->getParam('exception'))  //RuntimeException
-);
-
-
-//Usage ValidatorListener
-$validatorListener = new ValidatorListener();
-$validatorListener->attach($smsSender->getEventManager());
-
-$result = $smsSender->send('ErrorPhoneNumberFormat', 'TestContent');
-var_dump(
-    $result,                           //bool(false)
-    $smsSender->getEvent()->getError() //"The input does not match a phone number format"
-);
-
-
-//Usage LimitSendListener
-$limitSendListener = new LimitSendListener([
-    'waitingTime' => 1,  //每个号码每秒限发送一次
-    'cache'          => [
-        'adapter' => 'Memory',
-    ]
-]);
-$limitSendListener->attach($smsSender->getEventManager());
-
-$result = $smsSender->limitSend('13000000000', 'TestContent');
-var_dump($result); //bool(true)
-
-$result = $smsSender->limitSend('13000000000', 'TestContent');
-var_dump(
-    $result, //bool(false)
-    $smsSender->getEvent()->getError() //请等待1秒后在试
-);
-sleep(2);
-$result = $smsSender->limitSend('13000000000', 'TestContent');
-var_dump($result); //bool(true)
-
-~~~
-
-#### 在zend-mvc 中使用：
+### 在 Expressive 中使用：
 
 在 `config/application.php` 中添加模块加载.
 
@@ -118,154 +45,72 @@ return array(
 添加短信发送配置 `module.config.php`
 
 ~~~php
-use Zfegg\SmsSender\Listener\LimitSendListener;
-use Zfegg\SmsSender\Listener\ValidatorListener;
 
 return [
-'sms_sender_config' => [
-    'provider'  => [
-        'name'    => ExampleProvider::class,
-        'options' => [
-        ]
-    ],
-    'listeners' => [
-        [
-            'name'    => ValidatorListener::class,
-            'options' => [
-                [
-                    'name'       => 'phoneNumber',
-                    'filters'    => [
-                        ['name' => 'StringTrim']
-                    ],
-                    'validators' => [
-                        [
-                            'name' => 'PhoneNumber',
-                        ]
-                    ],
-                ],
-                [
-                    'name'       => 'content',
-                    'filters'    => [
-                        ['name' => 'StringTrim']
-                    ],
-                    'validators' => [
-                        [
-                            'name'    => 'StringLength',
-                            'options' => [
-                                'max' => 255
-                            ]
-                        ]
-                    ]
-                ]
-            ],
+    'dependencies' => [
+        'factories' => [
+            ProviderInterface::class => YourSmsProviderFactory::class,
         ],
-        [
-            'name'    => LimitSendListener::class,
-            'options' => [
-                'waiting_time'   => 10,
-                'day_send_times' => 5,
-                'cache'          => [
-                    'adapter' => 'Memory',
-                    'options' => array(
-                        'namespace' => 'Sms',
-                    ),
-                ]
+    ]
+    'zfegg' => [
+        LimitSender::class => [
+            'provider' => ProviderInterface::class, // 设置短信商服务名. (可选), 默认 `ProviderInterface::class`
+            'cache' => CacheInterface::class, // 设置缓存服务名 (可选), 默认 `CacheInterface::class`
+            'day_send_times' => 10, // 设置每天发送次数上限 (可选), 默认10
+            'waiting_time' => 60, //设置每次发送等待时长 (可选), 默认60s
+        ],
+        PostSmsCaptchaHandler::class  => [
+            'types' => [
+               'register' => 'Register captcha code: {code}',
+               'login' => 'Login captcha code: {code}',
             ]
         ],
     ]
-]
 ];
 ~~~
 
 控制器使用：
 
 ~~~php
-class SendSmsController extend AbstractActionController
-    protected $smsSender;
-    public function __construct(SmsSender $smsSender) 
-    {
-        $this->smsSender = $smsSender;
-    }
-     
-    public function sendAction() {
-        $this->smsSender->send('13000000000', 'TestContent');
-    }
-}
-~~~
 
-### 短信验证码
+//发送验证码
+$app->post('/api/send-sms-captcha', PostSmsCaptchaHandler::class);
 
-在`module.config.php` 中 `InputFilter` 配置
-
-~~~php
-use Zfegg\SmsSender\Captcha\SmsCode;
-
-return [
-    'caches' => [
-        'SmsCache' => [
-            'adapter' => 'Memcache'
-        ]
-    ],
-    'input_filter_specs' => [
-        'test' => [
-            [
-                'name' => 'captcha',
-                'validators' => [
-                    [
-                        'name' => SmsCode::class,
-                        'options' => [
-                            'inputName' => 'phone',
-                            'cache' => 'SmsCache'
-                        ]
+//业务验证码验证
+$app->post('/register', [
+  function ($req, $handler) {
+  
+    //配置验证器
+    $inputFilter = (new \Zend\InputFilter\Factory)->create([
+        [
+            'name' => 'captcha',
+            'validators' => [
+                [
+                    'name' => SmsCode::class,
+                    'options' => [
+                        'inputName' => 'phone',
                     ]
                 ]
-            ],
-            [
-                'name' => 'phone',
-                'validators' => [
-                    [
-                        'name' => 'PhoneNumber',
-                    ]
+            ]
+        ],
+        [
+            'name' => 'phone',
+            'validators' => [
+                [
+                    'name' => 'PhoneNumber',
                 ]
-            ],
-        ]
-    ]
-];
+            ]
+        ],
+    ])
+  
+    if (! $inputFilter->isValid()) {
+        //验证失败响应
+        return new JsonResponse(['messages' => $inputFilter->getMessages()], 403);
+    }
+
+    //验证成功继续注册
+    return $handler->handle($req);
+  },
+  YourRegisterHandler::class,
+])
 ~~~
-
-~~~php
-use Zfegg\SmsSender\Captcha\SmsCode;
-
-class SendSmsController extend AbstractActionController
-    protected $validators;
-    protected $smsSender;
-    protected $inputFilters;
-    public function __construct(SmsSender $smsSender, 
-                                ValidatorManager $validators,
-                                InputFilterPluginManager $inputFilters) 
-    {
-        $this->smsSender = $smsSender;
-        $this->validators = $validators;
-        $this->inputFilters = $inputFilters;
-    }
-     
-    public function sendAction() {
-        $smsCode = $this->validators->get(SmsCode::class, [
-           'cache' => 'SmsCache'
-        ]);
-
-        $this->smsSender->send('13000000000', 'TestCaptcha: ' . $smsCode);
-    }
-    
-    public function validationAction()
-    {
-        $inputFilter = $this->inputFilters->get('test');
-        $inputFilter->setData($_POST);
-        var_dump($inputFilter->isValid()); //验证
-    }
-}
-~~~
-
-## Interfaces / 接口说明
-
-* `Zfegg/SmsSender/Provider/ProviderInterface` 短信供应商实现接口

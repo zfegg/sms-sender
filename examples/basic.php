@@ -1,75 +1,51 @@
 <?php
 
-use Zfegg\SmsSender\Listener\LimitSendListener;
-use Zfegg\SmsSender\Listener\ValidatorListener;
-use Zfegg\SmsSender\Provider\ProviderInterface;
-use Zfegg\SmsSender\SmsSender;
-
 require __DIR__ . '/../vendor/autoload.php';
 
-class ExampleProvider implements ProviderInterface
-{
-    public function __construct(array $options)
-    {
-
-    }
-
-    /**
-     * @param $phoneNumber
-     * @param $content
-     * @return mixed
-     */
-    public function send($phoneNumber, $content)
-    {
-        if ($content == 'send error test') {
-            throw new \RuntimeException('An exception.');
-        }
-
-        return true;
-    }
-}
-
-$smsSender = new SmsSender(new ExampleProvider(['app_id' => 'test']));
+$smsSender = new \Zfegg\SmsSender\LimitSender(
+    new \Zfegg\SmsSender\Provider\NullProvider(),
+    new \Cache\Adapter\PHPArray\ArrayCachePool()
+);
 
 $result = $smsSender->send('13000000000', 'TestContent');
-var_dump($result); //bool(true)
+var_dump($result->isOk()); //bool(true)
 
 $result = $smsSender->send('13000000000', 'send error test');
 var_dump(
-    $result,                            //bool(false)
-    $smsSender->getEvent()->getError(), //'An exception.'
-    get_class($smsSender->getEvent()->getParam('exception'))  //RuntimeException
+    $result->isOk(),     //bool(false)
+    $result->getError(), //'请等待%sec%秒后再试'
+    $result->getParams()  // ['waitingSec' => 60]
 );
 
 
-//Usage ValidatorListener
-$validatorListener = new ValidatorListener();
-$validatorListener->attach($smsSender->getEventManager());
-
-$result = $smsSender->send('ErrorPhoneNumberFormat', 'TestContent');
-var_dump(
-    $result,                           //bool(false)
-    $smsSender->getEvent()->getError() //"The input does not match a phone number format"
-);
-
-
-//Usage LimitSendListener
-$limitSendListener = new LimitSendListener([
-    'waitingTime' => 1,  //每个号码每秒限发送一次
-    'cache'          => [
-        'adapter' => 'Memory',
-    ]
+//发送短信验证码
+$smsSender->clearLock('13000000000');
+$validator = new \Zfegg\SmsSender\Captcha\SmsCode([
+    'cache' => new \Cache\Adapter\PHPArray\ArrayCachePool()
 ]);
-$limitSendListener->attach($smsSender->getEventManager());
-
-$result = $smsSender->limitSend('13000000000', 'TestContent');
-var_dump($result); //bool(true)
-
-$result = $smsSender->limitSend('13000000000', 'TestContent');
-var_dump(
-    $result, //bool(false)
-    $smsSender->getEvent()->getError() //请等待1秒后在试
+$handler = new \Zfegg\SmsSender\Handler\PostSmsCaptchaHandler(
+    $smsSender,
+    $validator,
+    [
+        'register' => 'Register captcha code: {code}',
+        'login' => 'Login captcha code: {code}',
+    ],
+    new \Zend\ProblemDetails\ProblemDetailsResponseFactory(
+        function () {
+            return new Zend\Diactoros\Response();
+        }
+    )
 );
-sleep(2);
-$result = $smsSender->limitSend('13000000000', 'TestContent');
-var_dump($result); //bool(true)
+
+$req = (new \Zend\Diactoros\ServerRequestFactory())->createServerRequest('POST', '/send-sms-captcha');
+$req = $req->withParsedBody([
+    'type' => 'register',
+    'phone_number' => '13000000000',
+]);
+$response = $handler->handle($req);
+var_dump((string)$response->getBody());
+
+
+//验证短信验证码
+$result = $validator->isValid('1234', ['phone_number' => '13000000000']);
+var_dump($result);

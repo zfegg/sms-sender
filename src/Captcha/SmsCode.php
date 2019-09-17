@@ -2,15 +2,9 @@
 
 namespace Zfegg\SmsSender\Captcha;
 
-use Zend\Cache\Storage\Adapter\AbstractAdapter as AbstractCacheAdapter;
-use Zend\Cache\StorageFactory;
+use Psr\SimpleCache\CacheInterface;
 use Zend\Validator\AbstractValidator;
 
-/**
- * Class SmsCode
- *
- * @package Zfegg\SmsSender\Captcha
- */
 class SmsCode extends AbstractValidator
 {
     const MISSING_PHONE_NUMBER_INPUT = 'missingPhoneNumberInput';
@@ -29,7 +23,7 @@ class SmsCode extends AbstractValidator
 
     protected $phoneNumber;
 
-    protected $inputName;
+    protected $inputName = 'phone_number';
 
     /**
      * Length of the word to generate
@@ -45,8 +39,27 @@ class SmsCode extends AbstractValidator
      */
     protected $allowValidationTimes = 3;
 
+
+    protected $ttl = 300;
+
     /**
-     * @return AbstractCacheAdapter
+     * @return int
+     */
+    public function getTtl(): int
+    {
+        return $this->ttl;
+    }
+
+    /**
+     * @param int $ttl
+     */
+    public function setTtl(int $ttl): void
+    {
+        $this->ttl = $ttl;
+    }
+
+    /**
+     * @return CacheInterface
      */
     public function getCache()
     {
@@ -54,15 +67,11 @@ class SmsCode extends AbstractValidator
     }
 
     /**
-     * @param AbstractCacheAdapter|array $cache
+     * @param CacheInterface $cache
      * @return $this
      */
-    public function setCache($cache)
+    public function setCache(CacheInterface $cache)
     {
-        if (is_array($cache)) {
-            $cache = StorageFactory::factory($cache);
-        }
-
         $this->cache = $cache;
 
         return $this;
@@ -155,24 +164,24 @@ class SmsCode extends AbstractValidator
         }
 
         $cache = $this->getCache();
-        if ($data = $cache->getItem($phoneNumber)) {
+        if ($data = $cache->get($phoneNumber)) {
             if ($data[0] != $value) {
                 $data[1]--;
                 $this->setAllowValidationTimes($data[1]);
 
                 if ($data[1]) {
-                    $cache->setItem($phoneNumber, $data);
+                    $cache->set($phoneNumber, $data);
 
                     $this->abstractOptions['messageVariables']['times'] = 'allowValidationTimes';
                     $this->error(self::INPUT_ERROR);
                 } else {
-                    $cache->removeItem($phoneNumber);
+                    $cache->delete($phoneNumber);
                     $this->error(self::INPUT_ERROR_AND_RESET);
                 }
 
                 return false;
             } else {
-                $cache->removeItem($phoneNumber);
+                $cache->delete($phoneNumber);
                 return true;
             }
         } else {
@@ -185,21 +194,23 @@ class SmsCode extends AbstractValidator
      * Generate rand code
      *
      * @param string $phoneNumber
+     *
      * @return array [$randCode, $allowValidationTimes]
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function generate($phoneNumber = null)
     {
         $phoneNumber = $phoneNumber ?: $this->getPhoneNumber();
         $cache = $this->getCache();
 
-        if ($data = $cache->getItem($phoneNumber)) {
+        if ($data = $cache->get($phoneNumber)) {
             $code = $data;
         } else {
             $min = pow(10, $this->getWordlen() - 1);
             $max = str_repeat(9, $this->getWordlen());
             $code = [mt_rand($min, $max), $this->getAllowValidationTimes()];
 
-            $cache->setItem($phoneNumber, $code);
+            $cache->set($phoneNumber, $code, $this->getTtl());
         }
 
         return $code;

@@ -3,7 +3,6 @@
 
 namespace ZfeggTest\SmsSender;
 
-
 use Cache\Adapter\PHPArray\ArrayCachePool;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;

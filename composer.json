@@ -1,6 +1,6 @@
 {
     "name": "zfegg/sms-sender",
-    "description": "SMS abstract factory service.",
+    "description": "SMS sender service. And use for send sms captcha handler / 短信发送模块, 并且用于发送短信验证码处理程序",
     "license": "MIT",
     "type": "library",
     "keywords": [

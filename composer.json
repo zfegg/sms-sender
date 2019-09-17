@@ -7,10 +7,9 @@
         "sms",
         "sender",
         "sms-sender",
-        "zf",
-        "zend",
-        "zendframework",
-        "zfegg"
+        "zfegg",
+        "captcha",
+        "handler"
     ],
     "require": {
         "php": "^7.2",

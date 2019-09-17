@@ -7,6 +7,10 @@ class Module
 
     public function getConfig()
     {
-        return include __DIR__  . '/../config/module.config.php';
+        $config = (new ConfigProvider())();
+        $config['service_manager'] = $config['dependencies'];
+        unset($config['dependencies']);
+
+        return $config;
     }
 }

@@ -3,7 +3,6 @@
 
 namespace Zfegg\SmsSender\Event;
 
-
 use Zfegg\SmsSender\Result;
 
 trait SmsEventTrait

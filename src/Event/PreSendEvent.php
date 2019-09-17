@@ -3,7 +3,6 @@
 
 namespace Zfegg\SmsSender\Event;
 
-
 class PreSendEvent
 {
     use SmsEventTrait;

@@ -3,7 +3,6 @@
 
 namespace Zfegg\SmsSender;
 
-
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\SimpleCache\CacheInterface;
 use Zfegg\SmsSender\Event\PreSendEvent;
@@ -59,7 +58,8 @@ class LimitSender implements ProviderInterface
 
         $time = time();
         $cache = $this->cache;
-        $limitTime = $cache->get($phoneNumber);
+        $sendTimeKey = $phoneNumber . 'Time';
+        $limitTime = $cache->get($sendTimeKey);
         $waitingTime = $this->getWaitingTime();
         $waitingSec = $waitingTime - ($time - $limitTime);
 
@@ -80,8 +80,8 @@ class LimitSender implements ProviderInterface
             return $result;
         }
 
-        $sendTimesCacheId = $phoneNumber . 'Times';
-        if (($currentTimes = (int)$cache->get($sendTimesCacheId)) && $currentTimes >= $this->getDaySendTimes()) {
+        $sendNumCacheId = $phoneNumber . 'Num';
+        if (($currentTimes = (int)$cache->get($sendNumCacheId)) && $currentTimes >= $this->getDaySendTimes()) {
             $error = $this->getMessage(
                 'timesLock',
                 [
@@ -97,20 +97,21 @@ class LimitSender implements ProviderInterface
 
         $result = $this->provider->send($phoneNumber, $content);
 
-        $currentTimes++;
+        if ($result->isOk()) {
+            $currentTimes++;
 
-        //缓存当天发送次数
-        $cache->set(
-            $sendTimesCacheId,
-            $currentTimes,
-            strtotime(date('Y-m-d 23:59:59')) - $time
-        );
+            //缓存当天发送次数
+            $cache->set(
+                $sendNumCacheId,
+                $currentTimes,
+                strtotime(date('Y-m-d 23:59:59')) - $time
+            );
 
-        //缓存本次发送锁定
-        $cache->set($phoneNumber, $time, $waitingTime);
+            //缓存本次发送锁定
+            $cache->set($sendTimeKey, $time, $waitingTime);
 
-        $result = new Result(true);
-        $this->trigger(new SendResultEvent($phoneNumber, $content, $result));
+            $this->trigger(new SendResultEvent($phoneNumber, $content, $result));
+        }
 
         return $result;
     }
@@ -132,8 +133,8 @@ class LimitSender implements ProviderInterface
      */
     public function clearLock($phoneNumber)
     {
-        $this->cache->delete($phoneNumber);
-        $this->cache->delete($phoneNumber . 'Times');
+        $this->cache->delete($phoneNumber . 'Time');
+        $this->cache->delete($phoneNumber . 'Num');
     }
 
     /**

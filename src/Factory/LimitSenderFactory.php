@@ -11,20 +11,19 @@ use Zfegg\SmsSender\Provider\ProviderInterface;
 class LimitSenderFactory implements FactoryInterface
 {
 
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface $container, $requestedName, array $config = null)
     {
-        $config = $container->get('config')['zfegg'] ?? [];
-        $options = $config[LimitSender::class] ?? [];
+        $config = $container->get('config')['zfegg'][LimitSender::class] ?? [];
 
         return new LimitSender(
-            isset($options['provider'])
-                ? $container->get($options['provider'])
+            isset($config['provider'])
+                ? $container->get($config['provider'])
                 : $container->get(ProviderInterface::class),
-            isset($options['cache'])
-                ? $container->get($options['cache'])
+            isset($config['cache'])
+                ? $container->get($config['cache'])
                 : $container->get(CacheInterface::class),
-            $options['day_send_times'] ?? 10,
-            $options['waiting_time'] ?? 60
+            $config['day_send_times'] ?? 10,
+            $config['waiting_time'] ?? 60
         );
     }
 }

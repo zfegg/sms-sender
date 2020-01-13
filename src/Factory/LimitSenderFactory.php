@@ -4,7 +4,7 @@ namespace Zfegg\SmsSender\Factory;
 
 use Interop\Container\ContainerInterface;
 use Psr\SimpleCache\CacheInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Zfegg\SmsSender\LimitSender;
 use Zfegg\SmsSender\Provider\ProviderInterface;
 

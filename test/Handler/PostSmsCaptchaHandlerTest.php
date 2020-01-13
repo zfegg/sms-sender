@@ -3,7 +3,7 @@
 namespace ZfeggTest\SmsSender\Handler;
 
 use Prophecy\Argument;
-use Zend\Diactoros\ServerRequestFactory;
+use Laminas\Diactoros\ServerRequestFactory;
 use Zfegg\SmsSender\Handler\PostSmsCaptchaHandler;
 use Zfegg\SmsSender\Provider\ProviderInterface;
 use Zfegg\SmsSender\Result;

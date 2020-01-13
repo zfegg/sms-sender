@@ -30,14 +30,14 @@ $handler = new \Zfegg\SmsSender\Handler\PostSmsCaptchaHandler(
         'register' => 'Register captcha code: {code}',
         'login' => 'Login captcha code: {code}',
     ],
-    new \Zend\ProblemDetails\ProblemDetailsResponseFactory(
+    new \Mezzio\ProblemDetails\ProblemDetailsResponseFactory(
         function () {
-            return new Zend\Diactoros\Response();
+            return new Laminas\Diactoros\Response();
         }
     )
 );
 
-$req = (new \Zend\Diactoros\ServerRequestFactory())->createServerRequest('POST', '/send-sms-captcha');
+$req = (new \Laminas\Diactoros\ServerRequestFactory())->createServerRequest('POST', '/send-sms-captcha');
 $req = $req->withParsedBody([
     'type' => 'register',
     'phone_number' => '13000000000',

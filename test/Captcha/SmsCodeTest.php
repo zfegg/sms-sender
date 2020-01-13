@@ -3,9 +3,9 @@ namespace ZfeggTest\Captcha;
 
 use Cache\Adapter\PHPArray\ArrayCachePool;
 use PHPUnit\Framework\TestCase;
-use Zend\ServiceManager\ServiceManager;
-use Zend\Stdlib\ArrayUtils;
-use Zend\Validator\ConfigProvider;
+use Laminas\ServiceManager\ServiceManager;
+use Laminas\Stdlib\ArrayUtils;
+use Laminas\Validator\ConfigProvider;
 use Zfegg\SmsSender\Captcha\SmsCode;
 use Zfegg\SmsSender\Module;
 
@@ -117,7 +117,7 @@ class SmsCodeTest extends TestCase
         $sm = new ServiceManager($smConfig);
         $sm->setService('TestCache', new ArrayCachePool());
 
-        /** @var \Zend\Validator\ValidatorPluginManager $validators */
+        /** @var \Laminas\Validator\ValidatorPluginManager $validators */
         $validators = $sm->get('ValidatorManager');
         $validators->configure($configs['validators']);
         /*

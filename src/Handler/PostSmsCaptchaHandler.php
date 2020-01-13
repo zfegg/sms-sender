@@ -5,8 +5,8 @@ namespace Zfegg\SmsSender\Handler;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Zend\Diactoros\Response\JsonResponse;
-use Zend\ProblemDetails\ProblemDetailsResponseFactory;
+use Laminas\Diactoros\Response\JsonResponse;
+use Mezzio\ProblemDetails\ProblemDetailsResponseFactory;
 use Zfegg\SmsSender\Captcha\SmsCode;
 use Zfegg\SmsSender\LimitSender;
 

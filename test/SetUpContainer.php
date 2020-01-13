@@ -7,9 +7,9 @@ use Cache\Adapter\PHPArray\ArrayCachePool;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\SimpleCache\CacheInterface;
-use Zend\Diactoros\Response;
-use Zend\ServiceManager\ServiceManager;
-use Zend\Stdlib\ArrayUtils;
+use Laminas\Diactoros\Response;
+use Laminas\ServiceManager\ServiceManager;
+use Laminas\Stdlib\ArrayUtils;
 use Zfegg\SmsSender\ConfigProvider;
 use Zfegg\SmsSender\Handler\PostSmsCaptchaHandler;
 use Zfegg\SmsSender\Provider\NullProvider;
@@ -24,8 +24,8 @@ abstract class SetUpContainer extends TestCase
     protected function setUp()
     {
         $config = (new ConfigProvider())();
-        $config = ArrayUtils::merge($config, (new \Zend\Validator\ConfigProvider())());
-        $config = ArrayUtils::merge($config, (new \Zend\ProblemDetails\ConfigProvider())());
+        $config = ArrayUtils::merge($config, (new \Laminas\Validator\ConfigProvider())());
+        $config = ArrayUtils::merge($config, (new \Mezzio\ProblemDetails\ConfigProvider())());
         $config['zfegg'] = [
             PostSmsCaptchaHandler::class => [
                 'types' => [

@@ -3,7 +3,7 @@
 namespace Zfegg\SmsSender\Captcha;
 
 use Psr\SimpleCache\CacheInterface;
-use Zend\Validator\AbstractValidator;
+use Laminas\Validator\AbstractValidator;
 
 class SmsCode extends AbstractValidator
 {

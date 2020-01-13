@@ -81,7 +81,7 @@ $app->post('/register', [
   function ($req, $handler) {
   
     //配置验证器
-    $inputFilter = (new \Zend\InputFilter\Factory)->create([
+    $inputFilter = (new \Laminas\InputFilter\Factory)->create([
         [
             'name' => 'captcha',
             'validators' => [

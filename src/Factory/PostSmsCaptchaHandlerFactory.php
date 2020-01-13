@@ -3,8 +3,8 @@
 namespace Zfegg\SmsSender\Factory;
 
 use Psr\Container\ContainerInterface;
-use Zend\ProblemDetails\ProblemDetailsResponseFactory;
-use Zend\Validator\ValidatorPluginManager;
+use Mezzio\ProblemDetails\ProblemDetailsResponseFactory;
+use Laminas\Validator\ValidatorPluginManager;
 use Zfegg\SmsSender\Captcha\SmsCode;
 use Zfegg\SmsSender\Handler\PostSmsCaptchaHandler;
 use Zfegg\SmsSender\LimitSender;

@@ -2,7 +2,7 @@
 
 namespace Zfegg\SmsSender;
 
-use Zend\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
+use Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
 use Zfegg\SmsSender\Captcha\SmsCode;
 use Zfegg\SmsSender\Factory\LimitSenderFactory;
 use Zfegg\SmsSender\Factory\PostSmsCaptchaHandlerFactory;

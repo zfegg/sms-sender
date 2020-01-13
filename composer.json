@@ -1,6 +1,6 @@
 {
     "name": "zfegg/sms-sender",
-    "description": "SMS sender service. And use for send sms captcha handler / 短信发送模块, 并且用于发送短信验证码处理程序",
+    "description": "SMS sender service. And use for send sms captcha handler / \u77ed\u4fe1\u53d1\u9001\u6a21\u5757, \u5e76\u4e14\u7528\u4e8e\u53d1\u9001\u77ed\u4fe1\u9a8c\u8bc1\u7801\u5904\u7406\u7a0b\u5e8f",
     "license": "MIT",
     "type": "library",
     "keywords": [
@@ -22,13 +22,13 @@
         "psr/http-server-handler": "^1.0",
         "phpunit/phpunit": "^7.0",
         "squizlabs/php_codesniffer": "^2.5",
-        "zendframework/zend-diactoros": "^2.1",
-        "zendframework/zend-inputfilter": "^2.7",
-        "zendframework/zend-i18n": "^2.7",
-        "zendframework/zend-captcha": "^2.5",
-        "zendframework/zend-serializer": "^2.8",
-        "zendframework/zend-servicemanager": "^3.0",
-        "zendframework/zend-problem-details": "^1.0"
+        "laminas/laminas-diactoros": "^2.1",
+        "laminas/laminas-inputfilter": "^2.7",
+        "laminas/laminas-i18n": "^2.7",
+        "laminas/laminas-captcha": "^2.5",
+        "laminas/laminas-serializer": "^2.8",
+        "laminas/laminas-servicemanager": "^3.0",
+        "mezzio/mezzio-problem-details": "^1.0"
     },
     "authors": [
         {

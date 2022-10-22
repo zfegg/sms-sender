@@ -12,7 +12,7 @@
         "handler"
     ],
     "require": {
-        "php": "^7.2 | ^8.0",
+        "php": ">=7.3",
         "psr/simple-cache": "^1.0 | ^2.0 | ^3.0",
         "psr/log": "^1.0 | ^2.0 | ^3.0",
         "psr/event-dispatcher": "^1.0"
@@ -20,7 +20,7 @@
     "require-dev": {
         "cache/array-adapter": "^1.0",
         "psr/http-server-handler": "^1.0",
-        "phpunit/phpunit": "^7.0",
+        "phpunit/phpunit": "^9.0",
         "squizlabs/php_codesniffer": "^2.5",
         "laminas/laminas-diactoros": "^2.1",
         "laminas/laminas-inputfilter": "^2.7",
@@ -28,7 +28,8 @@
         "laminas/laminas-captcha": "^2.5",
         "laminas/laminas-serializer": "^2.8",
         "laminas/laminas-servicemanager": "^3.0",
-        "mezzio/mezzio-problem-details": "^1.0"
+        "mezzio/mezzio-problem-details": "^1.0",
+        "phpspec/prophecy": "^1.15"
     },
     "authors": [
         {

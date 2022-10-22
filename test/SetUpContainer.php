@@ -21,7 +21,7 @@ abstract class SetUpContainer extends TestCase
     /** @var ServiceManager */
     protected $container;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $config = (new ConfigProvider())();
         $config = ArrayUtils::merge($config, (new \Laminas\Validator\ConfigProvider())());

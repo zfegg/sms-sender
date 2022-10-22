@@ -50,5 +50,5 @@ jobs:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           composer require php-coveralls/php-coveralls --dev -W -q
-          ./vendor/bin/phpunit --coverage-clover clover.xml
+          ./vendor/bin/phpunit --coverage-clover build/logs/clover.xml
           ./vendor/bin/php-coveralls -v

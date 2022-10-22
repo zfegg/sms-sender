@@ -4,7 +4,6 @@
 
 [![GitHub Actions: Run tests](https://github.com/zfegg/sms-sender/workflows/qa/badge.svg)](https://github.com/zfegg/sms-sender/actions?query=workflow%3A%22qa%22)
 [![Coverage Status](https://coveralls.io/repos/github/zfegg/sms-sender/badge.svg?branch=master)](https://coveralls.io/github/zfegg/sms-sender?branch=master)
-[![Coverage Status](https://coveralls.io/repos/github/zfegg/sms-sender/badge.svg?branch=master)](https://coveralls.io/github/zfegg/sms-sender?branch=master)
 [![Latest Stable Version](http://poser.pugx.org/zfegg/sms-sender/v)](https://packagist.org/packages/zfegg/sms-sender)
 [![Total Downloads](http://poser.pugx.org/zfegg/sms-sender/downloads)](https://packagist.org/packages/zfegg/sms-sender)
 [![License](http://poser.pugx.org/zfegg/sms-sender/license)](https://packagist.org/packages/zfegg/sms-sender)

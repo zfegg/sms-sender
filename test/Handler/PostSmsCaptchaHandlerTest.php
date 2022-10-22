@@ -30,13 +30,12 @@ class PostSmsCaptchaHandlerTest extends SetUpContainer
 
     public function testProviderSendError()
     {
-        $provider = $this->prophesize(ProviderInterface::class);
+        $provider = $this->createMock(ProviderInterface::class);
 
-        $provider->send('15000000000', Argument::type('string'))
-            ->willReturn(new Result(false, 'test error'))
-            ->shouldBeCalled();
+        $provider->method('send')->with('15000000000', $this->isType("string"))
+            ->willReturn(new Result(false, 'test error'));
 
-        $this->container->setService(ProviderInterface::class, $provider->reveal());
+        $this->container->setService(ProviderInterface::class, $provider);
         /** @var PostSmsCaptchaHandler $handler */
         $handler = $this->container->get(PostSmsCaptchaHandler::class);
 

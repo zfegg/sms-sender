@@ -12,16 +12,16 @@
         "handler"
     ],
     "require": {
-        "php": "^7.2",
-        "psr/simple-cache": "^1.0",
-        "psr/log": "^1.0",
+        "php": ">=7.3",
+        "psr/simple-cache": "^1.0 | ^2.0 | ^3.0",
+        "psr/log": "^1.0 | ^2.0 | ^3.0",
         "psr/event-dispatcher": "^1.0"
     },
     "require-dev": {
         "cache/array-adapter": "^1.0",
         "psr/http-server-handler": "^1.0",
-        "phpunit/phpunit": "^7.0",
-        "squizlabs/php_codesniffer": "^2.5",
+        "phpunit/phpunit": "^9.0",
+        "squizlabs/php_codesniffer": "^3.7.1",
         "laminas/laminas-diactoros": "^2.1",
         "laminas/laminas-inputfilter": "^2.7",
         "laminas/laminas-i18n": "^2.7",

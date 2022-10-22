@@ -1,9 +1,15 @@
 短信发送抽象接口
 ==============
 
-[![Build Status](https://travis-ci.org/zfegg/sms-sender.png)](https://travis-ci.org/zfegg/sms-sender)
+
+[![GitHub Actions: Run tests](https://github.com/zfegg/sms-sender/workflows/qa/badge.svg)](https://github.com/zfegg/sms-sender/actions?query=workflow%3A%22qa%22)
 [![Coverage Status](https://coveralls.io/repos/github/zfegg/sms-sender/badge.svg?branch=master)](https://coveralls.io/github/zfegg/sms-sender?branch=master)
-[![Latest Stable Version](https://poser.pugx.org/zfegg/sms-sender/v/stable.png)](https://packagist.org/packages/zfegg/sms-sender)
+[![Coverage Status](https://coveralls.io/repos/github/zfegg/sms-sender/badge.svg?branch=master)](https://coveralls.io/github/zfegg/sms-sender?branch=master)
+[![Latest Stable Version](http://poser.pugx.org/zfegg/sms-sender/v)](https://packagist.org/packages/zfegg/sms-sender)
+[![Total Downloads](http://poser.pugx.org/zfegg/sms-sender/downloads)](https://packagist.org/packages/zfegg/sms-sender)
+[![License](http://poser.pugx.org/zfegg/sms-sender/license)](https://packagist.org/packages/zfegg/sms-sender)
+[![PHP Version Require](http://poser.pugx.org/zfegg/sms-sender/require/php)](https://packagist.org/packages/zfegg/sms-sender)
+
 
 抽象常用短信业务:
 
